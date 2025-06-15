@@ -1,0 +1,81 @@
+/* Animation for the loading screen */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.wag {
+  animation: wag 1s infinite;
+  transform-origin: center;
+  display: inline-block;
+}
+
+@keyframes wag {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+/* Fade animations */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.fade-menu {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.hidden-menu {
+  opacity: 0;
+}
+
+/* Cart item animations */
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  70% { transform: scale(0.9); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Smooth transitions */
+#main-content {
+  transition: opacity 0.5s ease-in-out;
+}
+
+#sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Hover effects */
+.hover\:shadow-xl:hover {
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Add to cart button hover animation */
+.add-to-cart {
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.add-to-cart:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+/* Responsive image container */
+.product-image {
+  aspect-ratio: 1;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-image:hover {
+  transform: scale(1.05);
+}

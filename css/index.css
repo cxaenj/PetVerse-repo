@@ -1,0 +1,13 @@
+/* index.css */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+@keyframes wag {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  75% { transform: rotate(-20deg); }
+}
+.wag {
+  animation: wag 1s infinite ease-in-out;
+}

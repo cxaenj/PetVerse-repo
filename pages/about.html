@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetVerse - About Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fade-menu {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 1;
+        }
+        .hidden-menu {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .hero-section {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                        url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-blue-100 font-sans text-gray-800">
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+        <div class="text-5xl animate-bounce">🐶</div>
+        <div class="text-4xl mt-2 wag">🐾</div>
+        <p class="mt-4 text-gray-600 font-medium">Loading About Us...</p>
+    </div>
+
+    <!-- Menu Toggle Button -->
+    <button id="menu-toggle" aria-label="Toggle navigation menu" class="hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-md focus:outline-none fade-menu">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-black shadow-lg transform -translate-x-full transition-transform z-40">
+        <div class="p-6 text-xl font-bold border-b border-gray-600 text-white">🐾 PetVerse Menu</div>
+        <nav class="p-4 space-y-4">
+            <a href="/pages/admin.html" class="block px-4 py-2 rounded text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">Dashboard</a>
+            <a href="/pages/pos.html" class="block px-4 py-2 rounded text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">POS</a>
+            <a href="/pages/inventory.html" class="block px-4 py-2 rounded text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">Inventory</a>
+            <a href="/pages/about.html" class="block px-4 py-2 rounded text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">About Us</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="opacity-0">
+        <!-- Hero Section -->
+        <section class="hero-section py-24 text-center flex flex-col items-center justify-center relative">
+    <div class="bg-white bg-opacity-80 rounded-3xl shadow-xl px-8 py-12 max-w-2xl w-full mx-auto">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+            Welcome to PetVerse
+        </h1>
+        <div class="w-20 h-1 bg-gradient-to-r from-emerald-400 to-blue-400 mx-auto mb-6 rounded"></div>
+        <p class="text-lg md:text-xl text-gray-700 mb-4 leading-relaxed">
+            Where life, love, happiness, and the pet community come together.
+        </p>
+        <p class="text-base md:text-lg text-gray-500 max-w-xl mx-auto">
+            We believe in creating a community that celebrates the joy and love our pets bring to our lives. Discover premium products and services for your beloved companions.
+        </p>
+        <div class="mt-8 flex justify-center gap-4">
+            <span class="text-3xl">🐶</span>
+            <span class="text-3xl">🐱</span>
+            <span class="text-3xl">🐾</span>
+        </div>
+    </div>
+</section>
+
+        <!-- Our Story Section -->
+        <section class="py-16 px-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-6">More Than Just Premium Products</h2>
+                        <p class="text-gray-600 mb-4">
+                            We are proud to be your trusted source for high-quality pet products and accessories. Our carefully curated selection includes premium brands and exclusive items that ensure your pets receive nothing but the best.
+                        </p>
+                        <p class="text-gray-600 mb-4">
+                            At PetVerse, we believe in giving back to the community. That's why we donate 1% of every sale to local animal shelters and rescue organizations, helping create better lives for pets in need.
+                        </p>
+                    </div>
+                    <div class="rounded-lg overflow-hidden shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?ixlib=rb-4.0.3" 
+                             alt="Happy dog" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Mission Section -->
+        <section class="bg-white bg-opacity-90 py-16 px-8">
+            <div class="max-w-6xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-12">PetVerse Store Experience</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-6">
+                        <div class="text-4xl mb-4">🏪</div>
+                        <h3 class="text-xl font-bold mb-4">Premium Location</h3>
+                        <p class="text-gray-600">Visit our stores and experience the PetVerse difference with our welcoming atmosphere and knowledgeable staff.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-4xl mb-4">🛍️</div>
+                        <h3 class="text-xl font-bold mb-4">Quality Products</h3>
+                        <p class="text-gray-600">We carefully select each product to ensure your pets receive the highest quality items for their needs.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-4xl mb-4">💝</div>
+                        <h3 class="text-xl font-bold mb-4">Community First</h3>
+                        <p class="text-gray-600">We're more than just a store - we're a community of pet lovers dedicated to making a positive impact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="py-16 px-8">
+            <div class="max-w-6xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-8">Visit Us Today</h2>
+                <p class="text-xl text-gray-600 mb-8">Experience the PetVerse difference at our locations</p>
+                <div class="inline-flex space-x-4">
+                    <a href="#" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">Find a Store</a>
+                    <a href="#" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">Contact Us</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('menu-toggle');
+        const loader = document.getElementById('loader');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+
+        if (loader && toggleBtn) {
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    mainContent.classList.remove('opacity-0');
+                    toggleBtn.classList.remove('hidden');
+                }, 1000);
+            });
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            sidebar.classList.toggle('-translate-x-full');
+            toggleBtn.classList.add('hidden-menu');
+            setTimeout(() => {
+                if (isOpen) toggleBtn.classList.remove('hidden-menu');
+            }, 300);
+        });
+    </script>
+</body>
+</html>

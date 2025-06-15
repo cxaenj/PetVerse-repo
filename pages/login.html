@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetVerse Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="/assets/css/login.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-blue-100 flex items-center justify-center min-h-screen text-gray-800 relative">
+  <!-- Loading Screen -->
+  <div id="loader" class="absolute inset-0 flex items-center justify-center bg-white z-50">
+    <div class="text-center">
+      <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p class="mt-4 text-gray-600 font-medium">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Login Form -->
+  <div id="login-container" class="bg-white bg-opacity-90 p-10 rounded-3xl shadow-2xl w-full max-w-sm opacity-0">
+    <h1 class="text-3xl font-bold mb-6 text-center text-emerald-700">PetVerse Admin Login</h1>
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium">Username</label>
+        <input id="username" type="text" class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2" required>
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium">Password</label>
+        <input id="password" type="password" class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2" required>
+      </div>
+      <button type="submit" class="w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition">Login</button>
+    </form>
+    <p id="error-msg" class="text-red-500 text-sm mt-4 hidden text-center">Invalid credentials</p>
+  </div>
+
+  <script src="/assets/js/login.js"></script>
+</body>
+</html>
