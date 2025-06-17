@@ -3,3 +3,98 @@
   opacity: 0;
   transition: opacity 0.5s ease-out;
 }
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Form validation styles */
+input:not(:placeholder-shown):invalid {
+    border-color: #EF4444;
+}
+
+input:not(:placeholder-shown):valid {
+    border-color: #10B981;
+}
+
+/* Password toggle button hover effect */
+button[onclick="togglePasswordVisibility(this)"]:hover svg {
+    color: #4B5563;
+}
+
+/* Remember me checkbox styles */
+input[type="checkbox"] {
+    border-radius: 0.25rem;
+    border-color: #D1D5DB;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #2563EB;
+    border-color: transparent;
+}
+
+input[type="checkbox"]:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: #3B82F6;
+    --tw-ring-offset-width: 2px;
+}
+
+/* Button states */
+button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Error message animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    @apply inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full;
+    animation: spin 0.75s linear infinite;
+}
+
+/* Form focus states */
+input:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2 border-blue-500;
+    outline: none;
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}

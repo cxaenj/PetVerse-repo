@@ -3,31 +3,295 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PetVerse Home</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/petverse-icon.ico" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="/assets/css/index.css" rel="stylesheet">
+  <link href="/css/index.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-emerald-50 to-blue-100 text-gray-800 font-sans relative">
+<body class="relative">
   <!-- Loading Screen with Pet Animation -->
-  <div id="loader" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-    <div class="text-5xl animate-bounce">🐶</div>
-    <div class="text-4xl mt-2 wag">🐾</div>
-    <p class="mt-4 text-gray-600 font-medium">Fetching your experience...</p>
+  <div id="loader" class="fixed inset-0 flex flex-col items-center justify-center z-50">
+    <div class="loading-animation">
+      <div class="text-6xl bounce-pet mb-6">🐶</div>
+      <div class="flex space-x-4">
+        <span class="text-4xl paw-print">🐾</span>
+        <span class="text-4xl paw-print">🐾</span>
+        <span class="text-4xl paw-print">🐾</span>
+      </div>
+    </div>
+    <p class="mt-8 text-xl font-medium text-gray-600 animate-fade-in">Fetching your experience...</p>
   </div>
 
   <!-- Main Homepage Content -->
-  <div id="main-content" class="min-h-screen flex flex-col items-center justify-center p-8 opacity-0">
-    <div class="bg-white bg-opacity-90 rounded-3xl shadow-2xl px-10 py-12 max-w-2xl w-full text-center">
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-emerald-600 mb-6 tracking-tight">Welcome to PetVerse</h1>
-      <p class="text-lg sm:text-xl text-gray-600 mb-8">Where everything your pets need is just a paw away 🐶🐾</p>
-      <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <a href="/pages/login.html" class="bg-emerald-500 hover:bg-emerald-600 transition-colors text-black font-medium px-6 py-3 rounded-xl shadow-lg">Login to Admin</a>
-        <a href="/pages/pos.html" class="bg-blue-500 hover:bg-blue-600 transition-colors text-white font-medium px-6 py-3 rounded-xl shadow-lg">Go to POS</a>
+  <div id="main-content" class="min-h-screen flex flex-col items-center justify-center p-8 pt-24 opacity-0">
+    <!-- Hero Section -->
+    <div id="hero" class="hero-section px-12 py-20 max-w-4xl w-full text-center animate-fade-in mb-16">
+      <h1 class="text-6xl sm:text-7xl font-black text-blue-600 mb-10 tracking-tight animate-float relative z-10">
+        Welcome to 
+        <span class="bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">PetVerse</span>
+      </h1>
+      <p class="text-2xl sm:text-3xl text-gray-700 mb-12 leading-relaxed">
+        Where everything your pets need is just a paw away 
+        <span class="wag inline-block text-4xl hover:scale-125 transition-transform">🐾</span>
+      </p>
+      <div>
+        <a href="/pages/register.html" class="inline-block px-12 py-4 text-xl font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-300/50">
+          Start Your Journey
+        </a>
       </div>
     </div>
-    <footer class="mt-12 text-sm text-gray-500">
-      &copy; 2025 PetVerse. All rights reserved.
+
+    <!-- Featured Section -->
+    <section>
+      <div id="featured" class="max-w-6xl w-full mx-auto mb-24 relative overflow-hidden pt-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <!-- Left side: Large Circular Image -->
+        <div class="relative">
+          <div class="aspect-square rounded-full bg-blue-50 overflow-hidden shadow-xl">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-transparent z-10"></div>
+            <img 
+              src="/img/dogcat.jpg" 
+              alt="Happy Golden Retriever" 
+              class="w-full h-full object-cover transform scale-110 hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+            />
+          </div>
+        </div>
+        <!-- Right side: Content and CTA -->
+        <div class="space-y-8 p-6">
+          <div class="space-y-2">
+            <h3 class="text-blue-600 text-lg font-medium uppercase tracking-wider">AUTHENTIC CARE</h3>
+            <div class="text-5xl font-bold text-blue-800 mb-4">
+              Pet<span class="text-blue-600">Verse</span>
+            </div>
+            <p class="text-2xl text-blue-700 font-light">CARE & ENJOY</p>
+          </div>
+          
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Experience the perfect harmony of quality care, premium products, and expert attention. Our dedicated team brings you authentic pet care services with a modern approach.
+          </p>
+
+          <div class="flex items-center gap-8">
+            <a href="/pages/inventory.html" class="btn btn-primary btn-lg bg-blue-600 hover:bg-blue-700 flex items-center">
+              <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              Quick Order
+            </a>
+            <div class="bg-blue-50 rounded-lg px-4 py-2 flex items-center gap-2">
+              <span class="text-blue-700 text-sm font-medium">Orders Today</span>
+              <span class="bg-white-800 text-black px-3 py-1 rounded-full text-sm font-bold">10m+</span>
+            </div>
+          </div>            <div class="grid grid-cols-2 gap-8 mt-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-blue-600">10+</div>
+              <div class="text-gray-600">Pet Categories</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-blue-600">24/7</div>
+              <div class="text-gray-600">Expert Care</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Choose PetVerse -->
+    <div id="why-choose" class="max-w-6xl w-full mx-auto mb-24">
+      <h2 class="text-4xl font-bold text-blue-600 text-center mb-4">Why Choose PetVerse</h2>
+      <p class="text-xl text-gray-600 text-center mb-12">Your trusted partner in pet care excellence</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="glass card p-6 text-center">
+          <span class="text-4xl mb-4 inline-block">⭐</span>
+          <h3 class="text-lg font-bold text-blue-600 mb-2">Premium Quality</h3>
+          <p class="text-gray-600">Carefully selected products from trusted brands</p>
+        </div>
+        <div class="glass card p-6 text-center">
+          <span class="text-4xl mb-4 inline-block">🛍️</span>
+          <h3 class="text-lg font-bold text-blue-600 mb-2">Wide Selection</h3>
+          <p class="text-gray-600">Everything your pet needs under one roof</p>
+        </div>
+        <div class="glass card p-6 text-center">
+          <span class="text-4xl mb-4 inline-block">💝</span>
+          <h3 class="text-lg font-bold text-blue-600 mb-2">Expert Care</h3>
+          <p class="text-gray-600">Knowledgeable staff to assist you</p>
+        </div>
+        <div class="glass card p-6 text-center">
+          <span class="text-4xl mb-4 inline-block">🚚</span>
+          <h3 class="text-lg font-bold text-blue-600 mb-2">Fast Delivery</h3>
+          <p class="text-gray-600">Quick and reliable shipping options</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locations Section -->
+    <div id="locations" class="max-w-6xl w-full mx-auto mb-16">
+      <h2 class="text-4xl font-bold text-blue-600 text-center mb-12">Visit Our Stores</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass card p-6">
+          <h3 class="text-xl font-bold text-blue-600 mb-4">Makati Branch</h3>
+          <p class="text-gray-600 mb-2">📍 Greenbelt 5, Makati City</p>
+          <p class="text-gray-600 mb-2">🕒 10:00 AM - 9:00 PM Daily</p>
+          <p class="text-gray-600">📞 (02) 8123-4567</p>
+        </div>
+        <div class="glass card p-6">
+          <h3 class="text-xl font-bold text-blue-600 mb-4">BGC Branch</h3>
+          <p class="text-gray-600 mb-2">📍 High Street, BGC</p>
+          <p class="text-gray-600 mb-2">🕒 10:00 AM - 10:00 PM Daily</p>
+          <p class="text-gray-600">📞 (02) 8234-5678</p>
+        </div>
+        <div class="glass card p-6">
+          <h3 class="text-xl font-bold text-blue-600 mb-4">Quezon City Branch</h3>
+          <p class="text-gray-600 mb-2">📍 UP Town Center, Katipunan</p>
+          <p class="text-gray-600 mb-2">🕒 10:00 AM - 8:00 PM Daily</p>
+          <p class="text-gray-600">📞 (02) 8345-6789</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer" class="mt-24 border-t border-gray-200 bg-gradient-to-b from-white to-gray-50">
+      <div class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <!-- Newsletter & Social Section -->
+          <div class="lg:col-span-5 space-y-8">
+            <div>
+              <div class="flex items-center space-x-3 mb-8">
+                <span class="text-3xl">🐾</span>
+                <span class="text-2xl font-bold text-blue-600">PetVerse</span>
+              </div>
+              <h3 class="text-xl font-bold mb-4">Stay Updated</h3>
+              <p class="text-gray-600 mb-6">Join our newsletter for exclusive pet care tips and special offers.</p>
+              <div class="flex gap-4">
+                <input type="email" placeholder="Enter your email" aria-label="Email for newsletter" class="px-6 py-3 border border-gray-200 rounded-xl flex-grow bg-white/80 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all">
+                <button class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition-all font-semibold whitespace-nowrap">Subscribe</button>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <h3 class="text-lg font-bold">Follow Us</h3>
+              <div class="flex space-x-4">
+                <a href="#" aria-label="Follow us on Facebook" title="Facebook" class="text-gray-600 hover:text-blue-600 transition-colors">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="#" aria-label="Follow us on Twitter" title="Twitter" class="text-gray-600 hover:text-blue-600 transition-colors">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                </a>
+                <a href="#" aria-label="Follow us on Instagram" title="Instagram" class="text-gray-600 hover:text-blue-600 transition-colors">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Links Section -->
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <!-- About Links -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-bold">About</h3>
+              <ul class="space-y-2">
+                <li><a href="/pages/about.html" class="text-gray-600 hover:text-blue-600 transition-colors">Careers</a></li>
+                <li><a href="/pages/about.html" class="text-gray-600 hover:text-blue-600 transition-colors">Partnership Program</a></li>
+                <li><a href="/pages/about.html" class="text-gray-600 hover:text-blue-600 transition-colors">All Policies</a></li>
+              </ul>
+            </div>
+
+            <!-- Products Links -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-bold">Products</h3>
+              <ul class="space-y-2">
+                <li><a href="/pages/inventory.html" class="text-gray-600 hover:text-blue-600 transition-colors">All Products</a></li>
+                <li><a href="/pages/inventory.html?category=food" class="text-gray-600 hover:text-blue-600 transition-colors">Pet Food</a></li>
+                <li><a href="/pages/inventory.html?category=healthcare" class="text-gray-600 hover:text-blue-600 transition-colors">Healthcare</a></li>
+                <li><a href="/pages/inventory.html?category=accessories" class="text-gray-600 hover:text-blue-600 transition-colors">Accessories</a></li>
+              </ul>
+            </div>
+
+            <!-- Support Links -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-bold">Support</h3>
+              <ul class="space-y-2">
+                <li><a href="/pages/about.html#contact" class="text-gray-600 hover:text-blue-600 transition-colors">Contact</a></li>
+                <li><a href="/pages/about.html#faq" class="text-gray-600 hover:text-blue-600 transition-colors">FAQ's</a></li>
+                <li><a href="/pages/about.html#shipping" class="text-gray-600 hover:text-blue-600 transition-colors">Shipping Info</a></li>
+                <li><a href="/pages/about.html#returns" class="text-gray-600 hover:text-blue-600 transition-colors">Returns</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="mt-16 pt-8 border-t border-gray-200">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+            <!-- Copyright -->
+            <div class="text-gray-500 text-sm">
+              © PetVerse 2025. All rights reserved
+            </div>
+            
+            <!-- Payment Methods -->
+            <div class="flex gap-6">
+              <img src="https://cdn-icons-png.flaticon.com/128/349/349221.png" alt="Visa" class="h-8 w-auto grayscale opacity-60 hover:opacity-100 hover:scale-105 transition-all cursor-pointer">
+              <img src="https://cdn-icons-png.flaticon.com/128/349/349228.png" alt="Mastercard" class="h-8 w-auto grayscale opacity-60 hover:opacity-100 hover:scale-105 transition-all cursor-pointer">
+              <img src="https://cdn-icons-png.flaticon.com/128/349/349230.png" alt="American Express" class="h-8 w-auto grayscale opacity-60 hover:opacity-100 hover:scale-105 transition-all cursor-pointer">
+              <img src="https://cdn-icons-png.flaticon.com/128/6124/6124998.png" alt="GCash" class="h-8 w-auto grayscale opacity-60 hover:opacity-100 hover:scale-105 transition-all cursor-pointer">
+            </div>
+
+            <!-- Legal Links -->
+            <div class="flex gap-8 text-sm">
+              <a href="/pages/about.html#privacy" class="text-gray-500 hover:text-blue-600 transition-all">Privacy Policy</a>
+              <a href="/pages/about.html#terms" class="text-gray-500 hover:text-blue-600 transition-all">Terms of Use</a>
+              <a href="/pages/about.html#accessibility" class="text-gray-500 hover:text-blue-600 transition-all">Accessibility</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </footer>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center">
+          <a href="#" class="cursor-pointer hover:opacity-80 transition-opacity">
+            <img src="/petverse-icon.ico" alt="PetVerse Icon" class="w-12 h-12">
+          </a>
+        </div>
+        <div class="hidden sm:flex space-x-8">
+          <a href="#featured" class="nav-link">Featured</a>
+          <a href="#why-choose" class="nav-link">Why Choose</a>
+          <a href="#locations" class="nav-link">Locations</a>
+          <a href="#footer" class="nav-link">About Us</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/pages/register.html" class="btn btn-primary btn-sm">Create an account</a>
+          <a href="/pages/login.html" class="text-blue-600 hover:text-blue-700">Login</a>
+          <button class="sm:hidden text-gray-600 hover:text-gray-900" aria-label="Open menu" title="Open menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu (initially hidden) -->
+  <div class="sm:hidden hidden fixed inset-0 z-30 bg-gray-800/50 backdrop-blur-sm" id="mobile-menu">
+    <div class="fixed right-0 top-0 bottom-0 w-64 bg-white shadow-xl">
+      <div class="flex justify-end p-4">
+        <button class="text-gray-600 hover:text-gray-900" id="close-menu" aria-label="Close menu" title="Close menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-col space-y-4 p-4">
+        <a href="#featured" class="nav-link">Featured</a>
+        <a href="#why-choose" class="nav-link">Why Choose</a>
+        <a href="#locations" class="nav-link">Locations</a>
+        <a href="#footer" class="nav-link">About Us</a>
+      </div>
+    </div>
   </div>
 
   <script src="/assets/js/index.js"></script>
