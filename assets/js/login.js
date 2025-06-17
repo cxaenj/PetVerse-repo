@@ -158,15 +158,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('member-email');
         const password = document.getElementById('member-password');
         const submitButton = memberForm.querySelector('button[type="submit"]');
+        
+        // Initialize button state
+        submitButton.disabled = false;
+        submitButton.classList.remove('opacity-50');
 
         function checkValidity() {
-            const isValid = email.value.trim() !== '' && 
-                           validateEmail(email.value.trim()) && 
-                           password.value.length >= 6;
+            const isValid = email.value.trim() !== '' && password.value.length > 0;
             submitButton.disabled = !isValid;
             submitButton.classList.toggle('opacity-50', !isValid);
         }
 
+        // Initial check
+        checkValidity();
+
+        // Add event listeners for real-time validation
         email.addEventListener('input', checkValidity);
         password.addEventListener('input', checkValidity);
 
@@ -192,18 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('DOMContentLoaded', validateForm);
 
     // Save email if "Remember me" is checked
-    memberForm.addEventListener('submit', () => {
-        const rememberMe = document.getElementById('remember-me');
-        const email = document.getElementById('member-email').value.trim();
-        
-        if (rememberMe && rememberMe.checked) {
-            localStorage.setItem('rememberedEmail', email);
-        } else {
-            localStorage.removeItem('rememberedEmail');
-        }
-    });
-
-    // Handle login
     memberForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -214,8 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const email = document.getElementById('member-email').value.trim();
         const password = document.getElementById('member-password').value;
+        const rememberMe = document.getElementById('remember-me');
 
-        // Enhanced validation
+        // Basic validation
         if (!email || !password) {
             showError('Please fill in all fields');
             return;
@@ -226,43 +221,76 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (password.length < 6) {
-            showError('Password must be at least 6 characters');
-            return;
-        }
-
         setLoading(true);
         
         try {
-            checkLoginAttempts();
-            
-            let data;
-            // Check if this is an admin login attempt
-            if (email === 'admin@petverse.com') {
-                data = await attemptLogin(`${API_URL}/api/login`, {
-                    email,
-                    password,
-                    role: 'admin'
-                });
+            // Admin login check
+            if (email === 'admin@petverse.com' && password === 'admin123') {
+                const adminSessionData = {
+                    userType: 'admin',
+                    email: email,
+                    token: 'admin-token',
+                    expiryTime: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+                };
                 
-                setSession(data, 'admin');
-                redirectBasedOnRole('admin');
+                // Save admin session
+                sessionStorage.setItem('session', JSON.stringify(adminSessionData));
+                
+                // Handle remember me for admin
+                if (rememberMe && rememberMe.checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+
+                // Redirect to admin dashboard with a small delay to ensure session is set
+                setTimeout(() => {
+                    window.location.href = '/pages/admin.html';
+                }, 100);
                 return;
             }
 
-            // Customer login
-            data = await attemptLogin(`${API_URL}/api/login`, {
-                email,
-                password,
-                role: 'customer'
+            // Regular member login
+            const response = await fetch(`${API_URL}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
             });
 
-            setSession(data, 'customer');
-            redirectBasedOnRole('customer');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
+            // Handle remember me for members
+            if (rememberMe && rememberMe.checked) {
+                localStorage.setItem('rememberedEmail', email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+
+            // Set member session
+            const memberSessionData = {
+                userType: 'member',
+                email: email,
+                token: data.token,
+                expiryTime: Date.now() + (24 * 60 * 60 * 1000)
+            };
+            sessionStorage.setItem('session', JSON.stringify(memberSessionData));
+
+            // Redirect to inventory page
+            setTimeout(() => {
+                window.location.href = '/pages/inventory.html';
+            }, 100);
 
         } catch (error) {
-            showError(error.message);
-            loginAttempts++;
+            showError(error.message || 'Login failed. Please try again.');
         } finally {
             setLoading(false);
         }

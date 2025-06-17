@@ -70,7 +70,7 @@
         <button 
           type="submit" 
           class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
-          disabled>
+          enabled>
           <span>Login</span>
         </button>
       </form>
@@ -92,7 +92,12 @@
           <label for="admin-password" class="block text-sm font-medium">Password</label>
           <input id="admin-password" type="password" class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2" required>
         </div>
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">Login</button>
+        <button 
+            type="submit" 
+            class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Login
+          </button>
       </form>
     </div>
 

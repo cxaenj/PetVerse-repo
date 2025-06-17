@@ -111,6 +111,22 @@ document.getElementById('reset-btn').addEventListener('click', () => {
   }
 });
 
+// Check admin session first
+function checkAdminSession() {
+    const session = JSON.parse(sessionStorage.getItem('session'));
+    if (!session || session.userType !== 'admin' || Date.now() > session.expiryTime) {
+        // Invalid or expired session, redirect to login
+        window.location.href = '/pages/login.html';
+        return false;
+    }
+    return true;
+}
+
+// Redirect if not admin
+if (!checkAdminSession()) {
+    throw new Error('Unauthorized access');
+}
+
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
   const main = document.getElementById('main-content');
