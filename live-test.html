@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Inventory Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-result { padding: 10px; margin: 5px 0; border-radius: 5px; font-family: monospace; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .form-group { margin: 10px 0; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Live Inventory System Test</h1>
+        
+        <div id="results"></div>
+        
+        <div class="two-column">
+            <div>
+                <h3>Database Testing</h3>
+                <button onclick="testEverything()">🚀 Run All Tests</button>
+                <button onclick="testConnection()">🔌 Test Connection</button>
+                <button onclick="checkSchema()">📋 Check Schema</button>
+                <button onclick="listProducts()">📦 List Products</button>
+                <button onclick="clearResults()">🗑️ Clear</button>
+            </div>
+            
+            <div>
+                <h3>Add Test Product</h3>
+                <div class="form-group">
+                    <input type="text" id="testName" placeholder="Product Name" value="Test Product">
+                </div>
+                <div class="form-group">
+                    <textarea id="testDescription" placeholder="Description">Test product for inventory system</textarea>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="testPrice" placeholder="Price" value="25.99" step="0.01">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="testQty" placeholder="Quantity" value="10">
+                </div>
+                <div class="form-group">
+                    <select id="testCategory">
+                        <option value="Food">Food</option>
+                        <option value="Toys">Toys</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Medicine">Medicine</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <button onclick="addTestProduct()">➕ Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://odjigifmwsdcnfjskanm.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kamlnaWZtd3NkY25manNrYW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxNTAwNTEsImV4cCI6MjA2NTcyNjA1MX0.VfLHy0lLH7pU6-pOvVi8-nmH1m1rLKtKL0HRfrnrboA'
+        
+        let supabase = null;
+        
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function initSupabase() {
+            if (supabase) return true;
+            
+            try {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                log('✅ Supabase client created', 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Failed to create Supabase client: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testConnection() {
+            log('🔌 Testing Supabase connection...', 'info');
+            
+            if (!await initSupabase()) return;
+            
+            try {
+                const { data, error } = await supabase.from('products').select('count').limit(0);
+                
+                if (error) {
+                    log(`❌ Connection failed: ${error.message}`, 'error');
+                    log(`🔍 Error code: ${error.code}`, 'error');
+                } else {
+                    log('✅ Connection successful!', 'success');
+                }
+            } catch (error) {
+                log(`❌ Connection error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkSchema() {
+            log('📋 Checking table schema...', 'info');
+            
+            if (!await initSupabase()) return;
+            
+            try {
+                // Try different approaches to check schema
+                const { data, error } = await supabase.from('products').select('*').limit(1);
+                
+                if (error) {
+                    log(`❌ Schema check failed: ${error.message}`, 'error');
+                    
+                    // Try with specific columns that we know should exist
+                    const { data: basicData, error: basicError } = await supabase
+                        .from('products')
+                        .select('id, name, price, stock_quantity')
+                        .limit(1);
+                    
+                    if (basicError) {
+                        log(`❌ Basic columns check failed: ${basicError.message}`, 'error');
+                    } else {
+                        log('✅ Basic columns exist (id, name, price, stock_quantity)', 'success');
+                    }
+                } else {
+                    log('✅ Schema accessible', 'success');
+                    if (data && data.length > 0) {
+                        const columns = Object.keys(data[0]);
+                        log(`📊 Available columns: ${columns.join(', ')}`, 'info');
+                    }
+                }
+            } catch (error) {
+                log(`❌ Schema check error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function listProducts() {
+            log('📦 Fetching products...', 'info');
+            
+            if (!await initSupabase()) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('is_active', true)
+                    .limit(5);
+                
+                if (error) {
+                    log(`❌ Product fetch failed: ${error.message}`, 'error');
+                } else {
+                    log(`✅ Found ${data.length} products`, 'success');
+                    data.forEach((product, index) => {
+                        log(`${index + 1}. ${product.name} - $${product.price} (Stock: ${product.stock_quantity})`, 'info');
+                    });
+                }
+            } catch (error) {
+                log(`❌ Product fetch error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function addTestProduct() {
+            log('➕ Adding test product...', 'info');
+            
+            if (!await initSupabase()) return;
+            
+            const timestamp = new Date().getTime();
+            const productData = {
+                name: document.getElementById('testName').value + ' ' + timestamp,
+                description: document.getElementById('testDescription').value,
+                price: parseFloat(document.getElementById('testPrice').value),
+                stock_quantity: parseInt(document.getElementById('testQty').value),
+                category: document.getElementById('testCategory').value,
+                image_url: 'https://placehold.co/200x200/png?text=Test+Product',
+                is_active: true
+            };
+            
+            log(`📦 Attempting to insert: ${productData.name}`, 'info');
+            
+            try {
+                // Try full insert first
+                const { data, error } = await supabase
+                    .from('products')
+                    .insert([productData])
+                    .select();
+                
+                if (error) {
+                    log(`❌ Full insert failed: ${error.message}`, 'error');
+                    
+                    // Try step by step with different field combinations
+                    log('🔄 Trying with required fields only...', 'info');
+                    const minimalData = {
+                        name: productData.name,
+                        price: productData.price,
+                        stock_quantity: productData.stock_quantity
+                    };
+                    
+                    const { data: minData, error: minError } = await supabase
+                        .from('products')
+                        .insert([minimalData])
+                        .select();
+                    
+                    if (minError) {
+                        log(`❌ Minimal insert failed: ${minError.message}`, 'error');
+                        log(`🔍 Error code: ${minError.code}`, 'error');
+                        log(`🔍 Error hint: ${minError.hint || 'No hint available'}`, 'error');
+                    } else {
+                        log('✅ Minimal insert successful!', 'success');
+                        log(`📦 Created product: ${minData[0].name} (ID: ${minData[0].id})`, 'success');
+                        
+                        // Now try to update it with additional fields
+                        log('🔄 Adding additional fields...', 'info');
+                        const { data: updateData, error: updateError } = await supabase
+                            .from('products')
+                            .update({
+                                description: productData.description,
+                                category: productData.category,
+                                image_url: productData.image_url,
+                                is_active: true
+                            })
+                            .eq('id', minData[0].id)
+                            .select();
+                        
+                        if (updateError) {
+                            log(`⚠️ Update failed: ${updateError.message}`, 'warning');
+                        } else {
+                            log('✅ Product updated with additional fields!', 'success');
+                        }
+                    }
+                } else {
+                    log('✅ Full product added successfully!', 'success');
+                    log(`📦 Created product: ${data[0].name} (ID: ${data[0].id})`, 'success');
+                }
+            } catch (error) {
+                log(`❌ Insert error: ${error.message}`, 'error');
+                log(`🔍 Stack trace: ${error.stack}`, 'error');
+            }
+        }
+        
+        async function testEverything() {
+            log('🚀 Running comprehensive test suite...', 'info');
+            await testConnection();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await checkSchema();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await listProducts();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            log('🏁 Test suite complete!', 'info');
+        }
+        
+        window.addEventListener('load', () => {
+            log('🧪 Test environment ready', 'success');
+        });
+    </script>
+</body>
+</html>

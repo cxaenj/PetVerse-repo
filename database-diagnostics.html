@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Schema & Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .schema-test {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Database Schema & Connection Diagnostics</h1>
+        <p>This tool will help diagnose the database connection and schema issues.</p>
+        
+        <div id="results"></div>
+        
+        <div class="schema-test">
+            <h3>Database Operations Test</h3>
+            <button onclick="runFullDiagnostics()">🔍 Run Full Diagnostics</button>
+            <button onclick="testBasicConnection()">🔌 Test Connection</button>
+            <button onclick="checkTableSchema()">🗂️ Check Schema</button>
+            <button onclick="testSimpleInsert()">➕ Test Insert</button>
+            <button onclick="clearResults()">🗑️ Clear Results</button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase configuration
+        const supabaseUrl = 'https://odjigifmwsdcnfjskanm.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kamlnaWZtd3NkY25manNrYW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxNTAwNTEsImV4cCI6MjA2NTcyNjA1MX0.VfLHy0lLH7pU6-pOvVi8-nmH1m1rLKtKL0HRfrnrboA'
+        
+        let supabase = null;
+        
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function initSupabase() {
+            try {
+                if (typeof window.supabase !== 'undefined') {
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    log('✅ Supabase client initialized successfully', 'success');
+                    return true;
+                } else {
+                    log('❌ Supabase library not loaded', 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Failed to initialize Supabase: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testBasicConnection() {
+            log('🔌 Testing basic Supabase connection...', 'info');
+            
+            if (!await initSupabase()) return;
+            
+            try {
+                // Test basic API response
+                const { data, error } = await supabase.auth.getSession();
+                
+                if (error && error.message !== 'Auth session missing!') {
+                    log(`⚠️ Auth test issue: ${error.message}`, 'warning');
+                } else {
+                    log('✅ Basic connection successful', 'success');
+                }
+            } catch (error) {
+                log(`❌ Connection failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkTableSchema() {
+            log('🗂️ Checking products table schema...', 'info');
+            
+            if (!supabase && !await initSupabase()) return;
+            
+            try {
+                // Try to get table structure by querying with limit 0
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .limit(0);
+                
+                if (error) {
+                    log(`❌ Schema check failed: ${error.message}`, 'error');
+                    log(`🔍 Error details: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    log('✅ Products table exists and is accessible', 'success');
+                }
+                
+                // Try to get actual data to see structure
+                const { data: sampleData, error: sampleError } = await supabase
+                    .from('products')
+                    .select('*')
+                    .limit(1);
+                
+                if (sampleError) {
+                    log(`⚠️ Could not fetch sample data: ${sampleError.message}`, 'warning');
+                } else if (sampleData && sampleData.length > 0) {
+                    log('📊 Sample product structure:', 'info');
+                    log(`<pre>${JSON.stringify(sampleData[0], null, 2)}</pre>`, 'info');
+                } else {
+                    log('📊 Table is empty, no sample data available', 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Schema check error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSimpleInsert() {
+            log('➕ Testing simple product insert...', 'info');
+            
+            if (!supabase && !await initSupabase()) return;
+            
+            const testProduct = {
+                name: `Test Product ${new Date().getTime()}`,
+                description: 'Test product for diagnostics',
+                price: 19.99,
+                stock_quantity: 50,
+                image_url: 'https://placehold.co/200x200/png?text=Test',
+                category: 'Test',
+                is_active: true
+            };
+            
+            log(`📦 Attempting to insert: ${testProduct.name}`, 'info');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('products')
+                    .insert([testProduct])
+                    .select();
+                
+                if (error) {
+                    log(`❌ Insert failed: ${error.message}`, 'error');
+                    log(`🔍 Error details: ${JSON.stringify(error, null, 2)}`, 'error');
+                    
+                    // Try without category field if it's the issue
+                    if (error.message.includes('category')) {
+                        log('🔄 Retrying without category field...', 'info');
+                        const { name, description, price, stock_quantity, image_url, is_active } = testProduct;
+                        const simpleProduct = { name, description, price, stock_quantity, image_url, is_active };
+                        
+                        const { data: retryData, error: retryError } = await supabase
+                            .from('products')
+                            .insert([simpleProduct])
+                            .select();
+                        
+                        if (retryError) {
+                            log(`❌ Retry failed: ${retryError.message}`, 'error');
+                        } else {
+                            log('✅ Insert successful without category field!', 'success');
+                            log(`📦 Created product ID: ${retryData[0].id}`, 'success');
+                        }
+                    }
+                } else {
+                    log('✅ Insert successful!', 'success');
+                    log(`📦 Created product ID: ${data[0].id}`, 'success');
+                }
+                
+            } catch (error) {
+                log(`❌ Insert error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runFullDiagnostics() {
+            log('🚀 Running full diagnostics suite...', 'info');
+            await testBasicConnection();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await checkTableSchema();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await testSimpleInsert();
+            log('🏁 Diagnostics complete!', 'info');
+        }
+        
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            log('🔧 Database diagnostics tool loaded', 'info');
+        });
+    </script>
+</body>
+</html>

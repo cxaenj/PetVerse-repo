@@ -3,102 +3,471 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetVerse Admin Dashboard</title>
+  <title>🐾 PetVerse Admin Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="/admin/css/admin.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .fade-menu {
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      opacity: 1;
-    }
-    .hidden-menu {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-emerald-50 to-blue-100 font-sans text-gray-800 relative">
-  <div id="loader" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-    <div class="text-5xl animate-bounce">🐶</div>
-    <div class="text-4xl mt-2 wag">🐾</div>
-    <p class="mt-4 text-gray-600 font-medium">Loading Admin Dashboard...</p>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-['Poppins'] text-gray-800 min-h-screen">
+  
+  <!-- Loading Screen -->
+  <div id="loader" class="fixed inset-0 bg-gradient-to-br from-blue-100 to-purple-100 flex flex-col items-center justify-center z-50">
+    <div class="relative">
+      <div class="text-8xl animate-bounce-slow pet-bounce">🐶</div>
+      <div class="absolute -top-2 -right-2 text-4xl animate-spin-slow">✨</div>
+    </div>
+    <div class="flex space-x-2 mt-6 paw-trail">
+      <span class="text-3xl animate-bounce paw-1">🐾</span>
+      <span class="text-3xl animate-bounce paw-2">🐾</span>
+      <span class="text-3xl animate-bounce paw-3">🐾</span>
+    </div>
+    <p class="mt-6 text-xl font-medium text-gray-700 animate-pulse">Fetching dashboard data...</p>
+    <div class="mt-4 w-64 bg-white rounded-full h-2 overflow-hidden">
+      <div class="loading-bar h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"></div>
+    </div>
   </div>
 
-  <button id="menu-toggle" aria-label="Toggle navigation menu" class="hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-md focus:outline-none fade-menu">
-    <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sidebar Navigation -->
+  <nav id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-white to-blue-50 shadow-2xl transform -translate-x-full transition-all duration-300 z-40 backdrop-blur-sm">
+    <!-- Header -->
+    <div class="p-6 border-b border-blue-100">
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <span class="text-3xl animate-bounce-gentle">🐾</span>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PetVerse</h1>
+          <p class="text-sm text-gray-500">Admin Portal</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="p-4 space-y-2">
+      <a href="/admin/pages/admin.html" class="nav-item active flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📊</span>
+        <span class="font-medium">Dashboard</span>
+        <div class="ml-auto w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+      </a>
+      <a href="/admin/pages/pos.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">🛒</span>
+        <span class="font-medium">Point of Sale</span>
+      </a>
+      <a href="/landing/pages/inventory.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📦</span>
+        <span class="font-medium">Inventory</span>
+      </a>
+
+      <!-- Logout -->
+      <div class="pt-4 border-t border-blue-100 mt-4">
+        <a href="/index.html" class="nav-item logout flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🚪</span>
+          <span class="font-medium">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pet of the Day -->
+    <div class="absolute bottom-4 left-4 right-4 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 border border-yellow-200">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl animate-bounce-gentle">🐕</span>
+        <div>
+          <p class="text-xs font-semibold text-orange-700">Pet of the Day</p>
+          <p class="text-sm text-orange-600">Max the Golden Retriever</p>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Toggle -->
+  <button id="menu-toggle" class="fixed top-6 left-6 z-50 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hidden">
+    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
     </svg>
   </button>
 
-  <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform -translate-x-full transition-transform z-40">
-    <div class="p-6 text-xl font-bold border-b border-gray-200">🐾 PetVerse Menu</div>
-    <nav class="p-4 space-y-4">
-      <a href="/admin/pages/admin.html" class="block px-4 py-2 rounded hover:bg-gray-100">Dashboard</a>
-      <a href="/admin/pages/pos.html" class="block px-4 py-2 rounded hover:bg-gray-100">POS</a>
-      <a href="/landing/pages/inventory.html" class="block px-4 py-2 rounded hover:bg-gray-100">Inventory</a>
-      <a href="/landing/pages/about.html" class="block px-4 py-2 rounded hover:bg-gray-100">About Us</a>
-      <div class="border-t border-gray-200 my-4"></div>
-      <a href="/index.html" class="block px-4 py-2 rounded hover:bg-red-100 text-red-600">Logout</a>
-    </nav>
-  </div>
-
-  <div id="main-content" class="opacity-0 pl-16">
-    <div class="min-h-screen flex">
-      <main class="flex-1 p-8">
-        <h1 class="text-3xl font-semibold mb-6">Admin Dashboard</h1>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-medium mb-2">Total Products</h2>
-            <p id="total-products" class="text-2xl font-bold">0</p>
+  <!-- Main Content -->
+  <div id="main-content" class="ml-72 transition-all duration-300 opacity-0">
+    <!-- Top Header -->
+    <header class="bg-white border-b border-gray-200 p-6 sticky top-0 z-30 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+          <p class="text-gray-600 flex items-center space-x-2">
+            <span>Welcome back!</span>
+            <span class="text-xl">👋</span>
+            <span class="live-time font-mono text-sm bg-blue-100 px-2 py-1 rounded"></span>
+          </p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+              <span class="text-xl">👤</span>
+            </div>
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
           </div>
-          <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-medium mb-2">Total Sales</h2>
-            <p id="total-sales" class="text-2xl font-bold">P0.00</p>
+        </div>
+      </div>
+    </header>
+    <!-- Statistics Cards -->
+    <main class="p-6">
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Active Pets Card -->
+        <div class="stat-card bg-white border border-gray-200 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-600 text-sm font-medium">Active Pets</p>
+              <p class="text-3xl font-bold mt-1 text-gray-800">342</p>
+              <p class="text-gray-500 text-xs mt-1">🐕 Currently registered</p>
+            </div>
+            <div class="text-4xl opacity-80">🐾</div>
           </div>
-          <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-medium mb-2">Items Sold</h2>
-            <p id="items-sold" class="text-2xl font-bold">0</p>
+          <div class="mt-4 flex items-center">
+            <span class="text-green-600 text-xs font-medium">✓ All healthy</span>
           </div>
         </div>
 
-        <div class="mt-10">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">Sales History</h2>
-            <div class="space-x-2">
-              <button id="export-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Export JSON</button>
-              <button id="export-csv-btn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Export CSV</button>
+        <!-- Veterinary Appointments Card -->
+        <div class="stat-card bg-white border border-gray-200 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-600 text-sm font-medium">Appointments</p>
+              <p class="text-3xl font-bold mt-1 text-gray-800">28</p>
+              <p class="text-gray-500 text-xs mt-1">🏥 This week</p>
+            </div>
+            <div class="text-4xl opacity-80">📅</div>
+          </div>
+          <div class="mt-4 flex items-center">
+            <span class="text-blue-600 text-xs font-medium">📋 5 today</span>
+          </div>
+        </div>
+
+        <!-- Pet Adoptions Card -->
+        <div class="stat-card bg-white border border-gray-200 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-600 text-sm font-medium">Adoptions</p>
+              <p class="text-3xl font-bold mt-1 text-gray-800">156</p>
+              <p class="text-gray-500 text-xs mt-1">🏠 This month</p>
+            </div>
+            <div class="text-4xl opacity-80">❤️</div>
+          </div>
+          <div class="mt-4 flex items-center">
+            <span class="text-red-600 text-xs font-medium">💕 12 this week</span>
+          </div>
+        </div>
+
+        <!-- Pet Care Services Card -->
+        <div class="stat-card bg-white border border-gray-200 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-600 text-sm font-medium">Care Services</p>
+              <p class="text-3xl font-bold mt-1 text-gray-800">89</p>
+              <p class="text-gray-500 text-xs mt-1">✂️ Grooming & more</p>
+            </div>
+            <div class="text-4xl opacity-80">💅</div>
+          </div>
+          <div class="mt-4 flex items-center">
+            <span class="text-purple-600 text-xs font-medium">🛁 15 groomed today</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts and Analytics -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Pet Care Analytics -->
+        <div class="chart-card bg-white border border-gray-200 shadow-lg rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+              <span class="mr-2">🐾</span>
+              Pet Care Overview
+            </h2>
+            <select title="Select time period" class="bg-gray-100 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm">
+              <option value="7">This Week</option>
+              <option value="30">This Month</option>
+              <option value="90">This Quarter</option>
+            </select>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🐕</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Dogs</p>
+                  <p class="text-sm text-gray-600">189 registered</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-blue-600">55%</p>
+                <p class="text-xs text-gray-500">of total pets</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🐱</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Cats</p>
+                  <p class="text-sm text-gray-600">98 registered</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-green-600">29%</p>
+                <p class="text-xs text-gray-500">of total pets</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🐦</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Birds</p>
+                  <p class="text-sm text-gray-600">55 registered</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-yellow-600">16%</p>
+                <p class="text-xs text-gray-500">of total pets</p>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="mb-6">
-            <label for="date-filter" class="mr-2 text-sm font-medium text-gray-700">Filter:</label>
-            <select id="date-filter" class="border rounded px-2 py-1">
-              <option value="all">All</option>
+        <!-- Pet Health Status -->
+        <div class="chart-card bg-white border border-gray-200 shadow-lg rounded-xl p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <span class="mr-2">🏥</span>
+            Pet Health Status
+          </h2>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">✅</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Healthy Pets</p>
+                  <p class="text-sm text-gray-600">Regular checkups completed</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-green-600">298</p>
+                <p class="text-xs text-gray-500">87% of total</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">⚠️</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Needs Attention</p>
+                  <p class="text-sm text-gray-600">Due for vaccination/checkup</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-yellow-600">32</p>
+                <p class="text-xs text-gray-500">9% of total</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🚨</span>
+                <div>
+                  <p class="font-semibold text-gray-800">Emergency Cases</p>
+                  <p class="text-sm text-gray-600">Requires immediate care</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg text-red-600">12</p>
+                <p class="text-xs text-gray-500">4% of total</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity & Controls -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Recent Pet Activities -->
+        <div class="lg:col-span-2 activity-card bg-white border border-gray-200 shadow-lg rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+              <span class="mr-2">🐾</span>
+              Recent Pet Activities
+            </h2>
+            <div class="flex space-x-2">
+              <button class="btn-export bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium">
+                📋 View All
+              </button>
+              <button class="btn-export bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium">
+                📊 Generate Report
+              </button>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <select title="Filter activities by time period" class="bg-gray-100 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm">
+              <option value="all">All Activities</option>
               <option value="7">Last 7 Days</option>
               <option value="30">Last 30 Days</option>
             </select>
           </div>
 
-          <ul id="sales-list" class="space-y-2 mb-10"></ul>
-          <h2 class="text-xl font-semibold mb-4">Sales Chart</h2>
-          <canvas id="salesChart" height="100"></canvas>
-          <h2 class="text-xl font-semibold mt-10 mb-4">Most Sold Products</h2>
-          <ul id="top-products" class="list-disc ml-6 text-gray-700"></ul>
-          <h2 class="text-xl font-semibold mt-10 mb-2">Average Sale Value</h2>
-          <p id="avg-sale" class="text-gray-800 text-lg ml-6">P0.00</p>
+          <div class="space-y-3 max-h-96 overflow-y-auto">
+            <!-- Static Pet Activities -->
+            <div class="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+              <span class="text-2xl">🐕</span>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">Max received vaccination</p>
+                <p class="text-sm text-gray-600">Golden Retriever • 2 hours ago</p>
+              </div>
+              <span class="text-xs text-gray-500 bg-blue-100 px-2 py-1 rounded-full">Health</span>
+            </div>
+            
+            <div class="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+              <span class="text-2xl">🐱</span>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">Luna completed grooming</p>
+                <p class="text-sm text-gray-600">Persian Cat • 4 hours ago</p>
+              </div>
+              <span class="text-xs text-gray-500 bg-green-100 px-2 py-1 rounded-full">Grooming</span>
+            </div>
+            
+            <div class="flex items-center space-x-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+              <span class="text-2xl">🐦</span>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">Sunny had checkup</p>
+                <p class="text-sm text-gray-600">Canary • 6 hours ago</p>
+              </div>
+              <span class="text-xs text-gray-500 bg-purple-100 px-2 py-1 rounded-full">Checkup</span>
+            </div>
+            
+            <div class="flex items-center space-x-4 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+              <span class="text-2xl">🐕</span>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">Buddy started training session</p>
+                <p class="text-sm text-gray-600">Labrador • 8 hours ago</p>
+              </div>
+              <span class="text-xs text-gray-500 bg-yellow-100 px-2 py-1 rounded-full">Training</span>
+            </div>
+            
+            <div class="flex items-center space-x-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+              <span class="text-2xl">🏠</span>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">Bella found new home</p>
+                <p class="text-sm text-gray-600">Mixed Breed • 1 day ago</p>
+              </div>
+              <span class="text-xs text-gray-500 bg-red-100 px-2 py-1 rounded-full">Adoption</span>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
 
-    <button id="reset-btn" class="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">Reset Sales Data</button>
-    <div id="toast" class="hidden fixed bottom-20 right-6 bg-black text-white px-4 py-2 rounded shadow-lg text-sm z-50">Action completed</div>
+        <!-- Quick Actions & Stats -->
+        <div class="space-y-6">
+          <!-- Quick Stats -->
+          <div class="quick-stats-card bg-white border border-gray-200 shadow-lg rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+              <span class="mr-2">⚡</span>
+              Quick Stats
+            </h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Avg. Visit Duration:</span>
+                <span class="font-bold text-lg text-gray-800">45 min</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Most Active Day:</span>
+                <span class="font-bold text-green-600">Saturday</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Peak Hour:</span>
+                <span class="font-bold text-blue-600">2:00 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pet Care Reminders -->
+          <div class="pet-care-card bg-white border border-gray-200 shadow-lg rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+              <span class="mr-2">🩺</span>
+              Pet Care Alerts
+            </h3>
+            <div class="space-y-3">
+              <div class="alert-item bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">🐕</span>
+                  <div>
+                    <p class="font-medium text-sm text-gray-800">Vaccination Due</p>
+                    <p class="text-xs text-gray-600">5 dogs need shots this week</p>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">😺</span>
+                  <div>
+                    <p class="font-medium text-sm text-gray-800">Health Check</p>
+                    <p class="text-xs text-gray-600">3 cats due for checkup</p>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item bg-green-50 border border-green-200 rounded-lg p-3">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">💊</span>
+                  <div>
+                    <p class="font-medium text-sm text-gray-800">Medication</p>
+                    <p class="text-xs text-gray-600">Daily meds for 8 pets</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 
+  <!-- Floating Action Buttons -->
+  <div class="fixed bottom-6 right-6 space-y-3">
+    <button class="fab bg-red-500 hover:bg-red-600 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300" title="Emergency Alert">
+      🚨
+    </button>
+    <button class="fab bg-blue-500 hover:bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300" title="Schedule Appointment">
+      📅
+    </button>
+    <button class="fab bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300" title="Add New Pet">
+      🐾
+    </button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">
+    <span id="toast-message">Action completed!</span>
+    <button id="toast-close" class="ml-3 text-white hover:text-gray-200">✕</button>
+  </div>
+
+  <!-- Scripts -->
   <script>
+    // Initialize live time
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      const timeElement = document.querySelector('.live-time');
+      if (timeElement) {
+        timeElement.textContent = timeString;
+      }
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Menu toggle functionality
     const toggleBtn = document.getElementById('menu-toggle');
-    const loader = document.getElementById('loader');
     const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const loader = document.getElementById('loader');
+
+    // Show menu toggle after loader disappears
     if (loader && toggleBtn) {
       const observer = new MutationObserver(() => {
         if (loader.style.display === 'none') {
@@ -108,15 +477,69 @@
       observer.observe(loader, { attributes: true, attributeFilter: ['style'] });
     }
 
+    // Toggle sidebar
     toggleBtn.addEventListener('click', () => {
       const isOpen = !sidebar.classList.contains('-translate-x-full');
       sidebar.classList.toggle('-translate-x-full');
-      toggleBtn.classList.add('hidden-menu');
-      setTimeout(() => {
-        if (isOpen) toggleBtn.classList.remove('hidden-menu');
-      }, 300);
+      
+      if (isOpen) {
+        mainContent.classList.remove('ml-72');
+        mainContent.classList.add('ml-0');
+      } else {
+        mainContent.classList.remove('ml-0');
+        mainContent.classList.add('ml-72');
+      }
     });
+
+    // Toast notification system
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Close toast manually
+    document.getElementById('toast-close').addEventListener('click', () => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('hidden');
+      toast.classList.remove('show');
+    });
+
+    // Add some optimized initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      // Remove the heavy counter animation since we use static values now
+      console.log('DOM loaded quickly - static pet care dashboard ready');
+    });
+
+    // Responsive design adjustments
+    function handleResize() {
+      const isMobile = window.innerWidth < 1024;
+      if (isMobile) {
+        sidebar.classList.add('-translate-x-full');
+        mainContent.classList.remove('ml-72');
+        mainContent.classList.add('ml-0');
+        toggleBtn.classList.remove('hidden');
+      } else {
+        sidebar.classList.remove('-translate-x-full');
+        mainContent.classList.remove('ml-0');
+        mainContent.classList.add('ml-72');
+        toggleBtn.classList.add('hidden');
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('load', handleResize);
   </script>
-  <script src="/admin/js/admin.js"></script>
+  <!-- JavaScript Files -->
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/supabase-test.js"></script>
 </body>
 </html>

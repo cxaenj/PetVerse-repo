@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Debug Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px; }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 12px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Form Debug Test</h1>
+        <p>This page tests the form submission functionality step by step.</p>
+        
+        <form id="test-form">
+            <div class="form-group">
+                <label for="product-name">Product Name</label>
+                <input type="text" id="product-name" placeholder="Enter product name" required>
+            </div>
+            <div class="form-group">
+                <label for="product-description">Description</label>
+                <textarea id="product-description" placeholder="Enter description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="product-price">Price</label>
+                <input type="number" id="product-price" placeholder="Enter price" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="product-qty">Quantity</label>
+                <input type="number" id="product-qty" placeholder="Enter quantity" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="product-category">Category</label>
+                <select id="product-category" required>
+                    <option value="">Select Category</option>
+                    <option value="Food">Food</option>
+                    <option value="Toys">Toys</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <button type="submit">Test Submit</button>
+            <button type="button" onclick="testSupabase()">Test Supabase</button>
+            <button type="button" onclick="clearLog()">Clear Log</button>
+        </form>
+        
+        <div id="log-container"></div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://odjigifmwsdcnfjskanm.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kamlnaWZtd3NkY25manNrYW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxNTAwNTEsImV4cCI6MjA2NTcyNjA1MX0.VfLHy0lLH7pU6-pOvVi8-nmH1m1rLKtKL0HRfrnrboA'
+        
+        let supabase = null;
+        
+        function log(message, type = 'info') {
+            const container = document.getElementById('log-container');
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('log-container').innerHTML = '';
+        }
+        
+        async function initSupabase() {
+            if (supabase) return true;
+            try {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                log('✅ Supabase client initialized', 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Supabase init failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testSupabase() {
+            log('🔌 Testing Supabase connection...', 'info');
+            if (!await initSupabase()) return;
+            
+            try {
+                const { data, error } = await supabase.from('products').select('*').limit(1);
+                if (error) {
+                    log(`❌ Supabase test failed: ${error.message}`, 'error');
+                } else {
+                    log('✅ Supabase connection successful!', 'success');
+                    if (data && data.length > 0) {
+                        log(`📦 Sample product: ${JSON.stringify(data[0], null, 2)}`, 'info');
+                    }
+                }
+            } catch (error) {
+                log(`❌ Supabase test error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            log('🔄 Form submitted!', 'info');
+            
+            // Get form data
+            const name = document.getElementById('product-name').value.trim();
+            const description = document.getElementById('product-description').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const qty = parseInt(document.getElementById('product-qty').value);
+            const category = document.getElementById('product-category').value;
+            
+            log(`📦 Form data: Name="${name}", Price=${price}, Qty=${qty}, Category="${category}"`, 'info');
+            
+            // Validation
+            if (!name || !price || qty < 0 || !category) {
+                log('❌ Validation failed: Missing required fields', 'error');
+                return;
+            }
+            
+            if (price <= 0) {
+                log('❌ Validation failed: Price must be greater than 0', 'error');
+                return;
+            }
+            
+            log('✅ Validation passed', 'success');
+            
+            // Test Supabase save
+            if (!await initSupabase()) {
+                log('❌ Cannot test save: Supabase not available', 'error');
+                return;
+            }
+            
+            const productData = {
+                name: name + ' ' + Date.now(), // Add timestamp to avoid duplicates
+                description,
+                price,
+                stock_quantity: qty,
+                category,
+                is_active: true
+            };
+            
+            log(`🔄 Attempting to save: ${JSON.stringify(productData, null, 2)}`, 'info');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('products')
+                    .insert([productData])
+                    .select();
+                
+                if (error) {
+                    log(`❌ Save failed: ${error.message}`, 'error');
+                    log(`🔍 Error details: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    log('✅ Product saved successfully!', 'success');
+                    log(`📦 Saved product: ${JSON.stringify(data[0], null, 2)}`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('test-form').reset();
+                }
+            } catch (error) {
+                log(`❌ Save exception: ${error.message}`, 'error');
+            }
+        }
+        
+        // Set up event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('test-form');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
+                log('✅ Form event listener added', 'success');
+            } else {
+                log('❌ Form not found!', 'error');
+            }
+            
+            // Auto-test Supabase on load
+            setTimeout(testSupabase, 1000);
+        });
+    </script>
+</body>
+</html>

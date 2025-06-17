@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Login Setup</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .info { background: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Quick Login Setup</h1>
+        <p>The inventory system requires login. Click the button below to set login status for testing.</p>
+        
+        <button onclick="setLoginStatus()">✅ Set Login Status</button>
+        <button onclick="clearLoginStatus()">❌ Clear Login Status</button>
+        <button onclick="checkStatus()">🔍 Check Current Status</button>
+        
+        <div id="status"></div>
+        
+        <div class="info">
+            <h3>Quick Links</h3>
+            <p>
+                <a href="/landing/pages/inventory.html" target="_blank">🏪 Open Inventory System</a><br>
+                <a href="/form-debug-test.html" target="_blank">🧪 Open Form Debug Test</a><br>
+                <a href="/landing/pages/login.html" target="_blank">🔑 Open Login Page</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function setLoginStatus() {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userType', 'admin');
+            localStorage.setItem('userName', 'Test User');
+            showStatus('✅ Login status set! You can now access the inventory system.', 'success');
+        }
+        
+        function clearLoginStatus() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userName');
+            showStatus('❌ Login status cleared.', 'info');
+        }
+        
+        function checkStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userType = localStorage.getItem('userType');
+            const userName = localStorage.getItem('userName');
+            
+            if (isLoggedIn) {
+                showStatus(`✅ Currently logged in as: ${userName || 'Unknown'} (${userType || 'user'})`, 'success');
+            } else {
+                showStatus('❌ Not logged in', 'info');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = type;
+            status.innerHTML = message;
+        }
+        
+        // Check status on page load
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>
