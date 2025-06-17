@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Records - PetVerse Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        .fade-out { opacity: 0; transition: opacity 0.5s ease-out; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar-gradient { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading Health Records...</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 sidebar-gradient text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 shadow-2xl">
+        <div class="p-6 border-b border-white/20">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-xl">🐾</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">PetVerse</h1>
+                    <p class="text-sm text-white/70">Admin Dashboard</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-6 space-y-2">
+            <a href="admin.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                <span class="text-lg group-hover:scale-110 transition-transform">📊</span>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="pos.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                <span class="text-lg group-hover:scale-110 transition-transform">🛒</span>
+                <span class="font-medium">Point of Sale</span>
+            </a>
+            
+            <div class="pt-4">
+                <h3 class="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">Pet Management</h3>
+                <div class="space-y-1">
+                    <a href="pets.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                        <span class="text-lg group-hover:scale-110 transition-transform">🐕</span>
+                        <span class="font-medium">Pets</span>
+                    </a>
+                    <a href="appointments.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                        <span class="text-lg group-hover:scale-110 transition-transform">📅</span>
+                        <span class="font-medium">Appointments</span>
+                    </a>
+                    <a href="health-records.html" class="flex items-center space-x-3 p-3 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
+                        <span class="text-lg">🏥</span>
+                        <span class="font-medium">Health Records</span>
+                    </a>
+                    <a href="pet-services.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                        <span class="text-lg group-hover:scale-110 transition-transform">🛁</span>
+                        <span class="font-medium">Pet Services</span>
+                    </a>
+                    <a href="service-bookings.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                        <span class="text-lg group-hover:scale-110 transition-transform">📋</span>
+                        <span class="font-medium">Service Bookings</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <a href="settings.html" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all group">
+                    <span class="text-lg group-hover:scale-110 transition-transform">⚙️</span>
+                    <span class="font-medium">Settings</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" class="lg:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white p-2 rounded-lg shadow-lg hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Main Content -->
+    <div id="main-content" class="lg:ml-64 min-h-screen opacity-0 transition-opacity duration-500">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Health Records Management</h2>
+                    <p class="text-gray-600">Manage pet medical history and health records</p>
+                </div>
+                <button id="add-record-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg hover:shadow-xl">
+                    + Add Health Record
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Records</p>
+                            <p id="total-records" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">📋</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Vaccinations</p>
+                            <p id="total-vaccinations" class="text-2xl font-bold text-green-600">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">💉</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Treatments</p>
+                            <p id="total-treatments" class="text-2xl font-bold text-orange-600">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🏥</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Checkups</p>
+                            <p id="total-checkups" class="text-2xl font-bold text-purple-600">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🔍</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Search Records</label>
+                        <input type="text" id="search-input" placeholder="Search by pet name, owner, or record type..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Type</label>
+                        <select id="type-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All Types</option>
+                            <option value="vaccination">Vaccination</option>
+                            <option value="treatment">Treatment</option>
+                            <option value="checkup">Checkup</option>
+                            <option value="surgery">Surgery</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Pet</label>
+                        <select id="pet-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All Pets</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                        <input type="date" id="date-filter" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Records Table -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pet</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Record Type</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Veterinarian</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="records-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-records" class="hidden p-8 text-center">
+                    <div class="text-6xl mb-4">🏥</div>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">No Health Records Found</h3>
+                    <p class="text-gray-600">Start by adding your first pet health record.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Health Record Modal -->
+    <div id="record-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 id="modal-title" class="text-xl font-bold text-gray-800">Add Health Record</h3>
+                </div>
+                <form id="record-form" class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pet *</label>
+                            <select id="record-pet-id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Select Pet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Record Type *</label>
+                            <select id="record-type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Select Type</option>
+                                <option value="vaccination">Vaccination</option>
+                                <option value="treatment">Treatment</option>
+                                <option value="checkup">Checkup</option>
+                                <option value="surgery">Surgery</option>
+                                <option value="emergency">Emergency</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                            <input type="date" id="record-date" required 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Veterinarian</label>
+                            <input type="text" id="record-veterinarian" placeholder="Dr. Smith" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+                            <input type="number" id="record-weight" step="0.1" placeholder="5.5" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Temperature (°C)</label>
+                            <input type="number" id="record-temperature" step="0.1" placeholder="38.5" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Diagnosis/Treatment</label>
+                        <input type="text" id="record-diagnosis" placeholder="Routine checkup, vaccinations up to date" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Medications</label>
+                        <input type="text" id="record-medications" placeholder="Antibiotics, pain medication" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                        <textarea id="record-notes" rows="3" placeholder="Additional notes about the visit..." 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Next Appointment</label>
+                        <input type="date" id="record-next-appointment" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                        <button type="button" id="cancel-record-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Save Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/health-records.js"></script>
+</body>
+</html>

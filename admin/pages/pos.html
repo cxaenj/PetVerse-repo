@@ -15,76 +15,178 @@
     <p class="mt-4 text-gray-600 font-medium">Preparing POS terminal...</p>
   </div>
 
-  <button id="menu-toggle" aria-label="Toggle navigation menu" class="hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-md focus:outline-none fade-menu">
-    <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mobile Menu Toggle -->
+  <button id="menu-toggle" class="fixed top-6 left-6 z-50 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hidden">
+    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
     </svg>
   </button>
 
-  <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform -translate-x-full transition-transform z-40">
-    <div class="p-6 text-xl font-bold border-b border-gray-200">🐾 PetVerse Menu</div>
-    <nav class="p-4 space-y-4">
-      <a href="/admin/pages/admin.html" class="block px-4 py-2 rounded hover:bg-gray-100">Dashboard</a>
-      <a href="/admin/pages/pos.html" class="block px-4 py-2 rounded hover:bg-gray-100">POS</a>
-      <a href="/landing/pages/inventory.html" class="block px-4 py-2 rounded hover:bg-gray-100">Inventory</a>
-      <div class="border-t border-gray-200 my-4"></div>
-      <a href="/index.html" class="block px-4 py-2 rounded hover:bg-red-100 text-red-600">Logout</a>
-    </nav>
-  </div>
+  <!-- Enhanced Sidebar Navigation -->
+  <nav id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-white to-blue-50 shadow-2xl transform -translate-x-full transition-all duration-300 z-40 backdrop-blur-sm">
+    <!-- Header -->
+    <div class="p-6 border-b border-blue-100">
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <span class="text-3xl animate-bounce-gentle">🐾</span>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PetVerse</h1>
+          <p class="text-sm text-gray-500">POS Terminal</p>
+        </div>
+      </div>
+    </div>
 
-  <div id="main-content" class="flex min-h-screen opacity-0 pl-16">
-    <main class="flex-1 p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Navigation Menu -->
+    <div class="p-4 space-y-2">
+      <a href="/admin/pages/admin.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📊</span>
+        <span class="font-medium">Dashboard</span>
+      </a>
+      <a href="/admin/pages/pos.html" class="nav-item active flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">🛒</span>
+        <span class="font-medium">Point of Sale</span>
+        <div class="ml-auto w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+      </a>
+      <a href="/landing/pages/inventory.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📦</span>
+        <span class="font-medium">Inventory</span>
+      </a>
+      
+      <!-- Pet Management Section -->
+      <div class="pt-2">
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Pet Management</p>
+        <a href="/admin/pages/pets.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🐕</span>
+          <span class="font-medium">Pets</span>
+        </a>
+        <a href="/admin/pages/appointments.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">📅</span>
+          <span class="font-medium">Appointments</span>
+        </a>
+        <a href="/admin/pages/health-records.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🏥</span>
+          <span class="font-medium">Health Records</span>
+        </a>
+        <a href="/admin/pages/pet-services.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">💅</span>
+          <span class="font-medium">Pet Services</span>
+        </a>
+        <a href="/admin/pages/service-bookings.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">📋</span>
+          <span class="font-medium">Service Bookings</span>
+        </a>
+      </div>
+
+      <!-- Settings & Logout -->
+      <div class="pt-4 border-t border-blue-100 mt-4">
+        <a href="/admin/pages/settings.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">⚙️</span>
+          <span class="font-medium">Settings</span>
+        </a>
+        <a href="/index.html" class="nav-item logout flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🚪</span>
+          <span class="font-medium">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pet of the Day -->
+    <div class="absolute bottom-4 left-4 right-4 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 border border-yellow-200">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl animate-bounce-gentle">🐕</span>
+        <div>
+          <p class="text-xs font-semibold text-orange-700">Pet of the Day</p>
+          <p class="text-sm text-orange-600">Max the Golden Retriever</p>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="main-content" class="ml-72 transition-all duration-300 opacity-0">
+    <!-- Top Header -->
+    <header class="bg-white border-b border-gray-200 p-6 sticky top-0 z-30 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+            <span class="mr-3">🛒</span>
+            Point of Sale
+          </h1>
+          <p class="text-gray-600 flex items-center space-x-2">
+            <span>Process transactions quickly and efficiently</span>
+            <span class="text-xl">💳</span>
+          </p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+              <span class="text-xl">👤</span>
+            </div>
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <section class="lg:col-span-2">
         <div class="flex justify-between items-center mb-6">
-          <h1 class="text-3xl font-extrabold text-emerald-700">Menu Items</h1>
-          <input id="search-input" type="text" placeholder="Search product..." class="border border-gray-300 px-4 py-2 rounded-xl">
+          <h2 class="text-2xl font-bold text-emerald-700">Products</h2>
+          <input id="search-input" type="text" placeholder="Search product..." class="border border-gray-300 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="product-list">
-          <!-- Product cards will be dynamically inserted here with the following template -->
-          <!-- Template for reference:
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-            <div class="h-48 overflow-hidden">
-              <img src="product-image-url" alt="Product Name" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-              <h3 class="text-lg font-bold mb-2">Product Name</h3>
-              <p class="text-emerald-600 font-semibold mb-2">₱ Price</p>
-              <p class="text-sm text-gray-600 mb-3">Stock: Quantity</p>
-              <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                Add to Cart
-              </button>
-            </div>
-          </div>
-          -->
+          <!-- Product cards will be dynamically inserted here -->
         </div>
       </section>
 
       <section class="bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 h-fit sticky top-6">
-        <h2 class="text-2xl font-bold mb-4 text-blue-600">Current Order</h2>
+        <h2 class="text-2xl font-bold mb-4 text-blue-600 flex items-center">
+          <span class="mr-3">🛒</span>
+          Current Order
+        </h2>
         <ul id="cart-list" class="mb-4 space-y-3"></ul>
 
-        <label for="payment-method" class="text-sm text-gray-600 mb-1 block">Payment Method:</label>
-        <select id="payment-method" class="border rounded px-3 py-2 w-full mb-4">
-          <option value="Cash">Cash</option>
-          <option value="GCash">GCash</option>
-          <option value="Card">Card</option>
-        </select>
+        <div class="space-y-4">
+          <div>
+            <label for="payment-method" class="text-sm font-medium text-gray-700 mb-1 block">Payment Method:</label>
+            <select id="payment-method" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500">
+              <option value="Cash">💵 Cash</option>
+              <option value="GCash">📱 GCash</option>
+              <option value="Card">💳 Card</option>
+            </select>
+          </div>
 
-        <label for="discount-type" class="text-sm text-gray-600 mb-1 block">Discount Type</label>
-        <select id="discount-type" class="border rounded px-3 py-2 w-full mb-2">
-          <option value="none">None</option>
-          <option value="pwd">PWD (20%)</option>
-          <option value="manual">Manual Input</option>
-        </select>
-        <input type="number" id="discount" min="0" value="0" class="border rounded px-3 py-2 w-full mb-4" placeholder="Enter discount ₱">
-
-        <div class="text-right border-t pt-4 space-y-1">
-          <div class="text-sm">Subtotal: ₱<span id="total">0.00</span></div>
-          <div class="text-sm">Discount: ₱<span id="discount-val">0.00</span></div>
-          <div class="text-xl font-bold text-green-700">Total: ₱<span id="total-final">0.00</span></div>
+          <div>
+            <label for="discount-type" class="text-sm font-medium text-gray-700 mb-1 block">Discount Type:</label>
+            <select id="discount-type" class="border border-gray-300 rounded-lg px-3 py-2 w-full mb-2 focus:ring-2 focus:ring-blue-500">
+              <option value="none">No Discount</option>
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (₱)</option>
+            </select>
+            <input type="number" id="discount" min="0" value="0" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500" placeholder="Enter discount amount">
+          </div>
         </div>
 
-        <button id="checkout-btn" class="bg-blue-600 text-white px-4 py-2 rounded mt-4" disabled>Checkout</button>
+        <div class="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">
+          <div class="flex justify-between text-sm">
+            <span>Subtotal:</span>
+            <span>₱<span id="total">0.00</span></span>
+          </div>
+          <div class="flex justify-between text-sm text-red-600">
+            <span>Discount:</span>
+            <span>-₱<span id="discount-val">0.00</span></span>
+          </div>
+          <div class="border-t pt-2 flex justify-between text-xl font-bold text-green-700">
+            <span>Total:</span>
+            <span>₱<span id="total-final">0.00</span></span>
+          </div>
+        </div>
+
+        <button id="checkout-btn" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium mt-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <span class="mr-2">💳</span>
+          Process Checkout
+        </button>
       </section>
     </main>
   </div>

@@ -116,6 +116,36 @@ async function updateProductStockInSupabase(productId, newStock) {
   }
 }
 
+// Function to record a sale in Supabase
+async function recordSaleInSupabase(saleDetails) {
+  if (!supabase) {
+    console.log('📦 Recording sale in localStorage (Supabase not available)');
+    // Optionally, save sales to localStorage as a fallback
+    let localSales = JSON.parse(localStorage.getItem('sales')) || [];
+    localSales.push({ ...saleDetails, id: Date.now().toString() }); // Simple ID for local
+    localStorage.setItem('sales', JSON.stringify(localSales));
+    return true;
+  }
+
+  try {
+    console.log('🔄 Recording sale in Supabase...', saleDetails);
+    const { data, error } = await supabase
+      .from('sales')
+      .insert([saleDetails]);
+
+    if (error) {
+      console.error('❌ Error recording sale in Supabase:', error);
+      return false;
+    }
+
+    console.log('✅ Sale recorded successfully in Supabase:', data);
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to record sale:', error);
+    return false;
+  }
+}
+
 window.addEventListener('load', async () => {
   const loader = document.getElementById('loader');
   const main = document.getElementById('main-content');
@@ -239,7 +269,9 @@ window.addEventListener('load', async () => {
     const isPercentage = discountType.value === 'percentage';
     
     let discountAmount = 0;
-    if (isPercentage) {
+    if (discountType.value === 'none') {
+      discountAmount = 0;
+    } else if (isPercentage) {
       discountAmount = (subtotal * discountValue) / 100;
     } else {
       discountAmount = discountValue;
@@ -324,7 +356,7 @@ window.addEventListener('load', async () => {
     const confirmation = confirm('Proceed with checkout?');
     if (!confirmation) return;
     
-    let allUpdatesSuccessful = true;
+    let allInventoryUpdatesSuccessful = true;
     
     // Update inventory stock for each item in cart
     for (const cartItem of cart) {
@@ -335,7 +367,7 @@ window.addEventListener('load', async () => {
         // Update in Supabase
         const updateSuccess = await updateProductStockInSupabase(inventory[inventoryIndex].id, newStock);
         if (!updateSuccess) {
-          allUpdatesSuccessful = false;
+          allInventoryUpdatesSuccessful = false;
           console.error(`Failed to update stock for ${cartItem.name}`);
         } else {
           // Update local inventory
@@ -344,12 +376,41 @@ window.addEventListener('load', async () => {
       }
     }
     
-    if (allUpdatesSuccessful) {
-      alert('Checkout successful! Inventory updated.');
-      console.log('✅ All inventory updates completed successfully');
-    } else {
-      alert('Checkout completed, but some inventory updates may have failed. Please check the console.');
-      console.warn('⚠️ Some inventory updates failed during checkout');
+    let saleRecordedSuccessfully = false;
+    if (allInventoryUpdatesSuccessful) {
+      // Prepare sale details
+      const saleDetails = {
+        items: cart.map(item => ({
+          product_id: item.id, // Assuming item.id is the product's unique ID
+          name: item.name,
+          quantity: item.qty,
+          price_at_sale: item.price 
+        })),
+        subtotal: parseFloat(totalDisplay.textContent),
+        discount_applied: parseFloat(discountValDisplay.textContent) || 0,
+        final_total: parseFloat(totalFinal.textContent),
+        transaction_time: new Date().toISOString()
+        // You could add other fields like payment_method, customer_id, etc.
+      };
+
+      // Record the sale
+      saleRecordedSuccessfully = await recordSaleInSupabase(saleDetails);
+    }
+    
+    if (allInventoryUpdatesSuccessful && saleRecordedSuccessfully) {
+      alert('Checkout successful! Inventory updated and sale recorded.');
+      console.log('✅ All inventory updates and sale recording completed successfully');
+    } else if (allInventoryUpdatesSuccessful && !saleRecordedSuccessfully) {
+      alert('Checkout successful and inventory updated, but failed to record the sale. Please check console.');
+      console.warn('⚠️ Sale recording failed after successful inventory update.');
+    } else if (!allInventoryUpdatesSuccessful && saleRecordedSuccessfully) {
+      // This case is less likely if sale recording depends on successful inventory update logic,
+      // but included for completeness.
+      alert('Sale recorded, but some inventory updates may have failed. Please check the console.');
+      console.warn('⚠️ Some inventory updates failed, but sale was recorded.');
+    } else { // !allInventoryUpdatesSuccessful && !saleRecordedSuccessfully
+      alert('Checkout completed, but some inventory updates and sale recording may have failed. Please check the console.');
+      console.warn('⚠️ Some inventory updates and sale recording failed during checkout');
     }
     
     // Clear cart and refresh display

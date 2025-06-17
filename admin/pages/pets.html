@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐾 PetVerse Admin - Pets Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="/admin/css/admin.css" rel="stylesheet">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-['Poppins'] text-gray-800 min-h-screen">
+  
+  <!-- Loading Screen -->
+  <div id="loader" class="fixed inset-0 bg-gradient-to-br from-blue-100 to-purple-100 flex flex-col items-center justify-center z-50">
+    <div class="relative">
+      <div class="text-8xl animate-bounce-slow pet-bounce">🐶</div>
+      <div class="absolute -top-2 -right-2 text-4xl animate-spin-slow">✨</div>
+    </div>
+    <div class="flex space-x-2 mt-6 paw-trail">
+      <span class="text-3xl animate-bounce paw-1">🐾</span>
+      <span class="text-3xl animate-bounce paw-2">🐾</span>
+      <span class="text-3xl animate-bounce paw-3">🐾</span>
+    </div>
+    <p class="mt-6 text-xl font-medium text-gray-700 animate-pulse">Loading pets data...</p>
+    <div class="mt-4 w-64 bg-white rounded-full h-2 overflow-hidden">
+      <div class="loading-bar h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"></div>
+    </div>
+  </div>
+
+  <!-- Enhanced Sidebar Navigation -->
+  <nav id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-white to-blue-50 shadow-2xl transform -translate-x-full transition-all duration-300 z-40 backdrop-blur-sm">
+    <!-- Header -->
+    <div class="p-6 border-b border-blue-100">
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <span class="text-3xl animate-bounce-gentle">🐾</span>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PetVerse</h1>
+          <p class="text-sm text-gray-500">Admin Portal</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="p-4 space-y-2">
+      <a href="/admin/pages/admin.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📊</span>
+        <span class="font-medium">Dashboard</span>
+      </a>
+      <a href="/admin/pages/pos.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">🛒</span>
+        <span class="font-medium">Point of Sale</span>
+      </a>
+      <a href="/landing/pages/inventory.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+        <span class="text-xl">📦</span>
+        <span class="font-medium">Inventory</span>
+      </a>
+      
+      <!-- Pet Management Section -->
+      <div class="pt-2">
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Pet Management</p>
+        <a href="/admin/pages/pets.html" class="nav-item active flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🐕</span>
+          <span class="font-medium">Pets</span>
+          <div class="ml-auto w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+        </a>
+        <a href="/admin/pages/appointments.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">📅</span>
+          <span class="font-medium">Appointments</span>
+        </a>
+        <a href="/admin/pages/health-records.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🏥</span>
+          <span class="font-medium">Health Records</span>
+        </a>
+        <a href="/admin/pages/pet-services.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">💅</span>
+          <span class="font-medium">Pet Services</span>
+        </a>
+        <a href="/admin/pages/service-bookings.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">📋</span>
+          <span class="font-medium">Service Bookings</span>
+        </a>
+      </div>
+
+      <!-- Settings & Logout -->
+      <div class="pt-4 border-t border-blue-100 mt-4">
+        <a href="/admin/pages/settings.html" class="nav-item flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">⚙️</span>
+          <span class="font-medium">Settings</span>
+        </a>
+        <a href="/index.html" class="nav-item logout flex items-center space-x-3 p-3 rounded-xl transition-all duration-200">
+          <span class="text-xl">🚪</span>
+          <span class="font-medium">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pet of the Day -->
+    <div class="absolute bottom-4 left-4 right-4 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 border border-yellow-200">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl animate-bounce-gentle">🐕</span>
+        <div>
+          <p class="text-xs font-semibold text-orange-700">Pet of the Day</p>
+          <p class="text-sm text-orange-600">Max the Golden Retriever</p>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Toggle -->
+  <button id="menu-toggle" class="fixed top-6 left-6 z-50 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hidden">
+    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+
+  <!-- Main Content -->
+  <div id="main-content" class="ml-72 transition-all duration-300 opacity-0">
+    <!-- Top Header -->
+    <header class="bg-white border-b border-gray-200 p-6 sticky top-0 z-30 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+            <span class="mr-3">🐕</span>
+            Pets Management
+          </h1>
+          <p class="text-gray-600 flex items-center space-x-2">
+            <span>Manage pet profiles and records</span>
+            <span class="text-xl">🐾</span>
+          </p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button id="add-pet-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <span class="mr-2">➕</span>
+            Add New Pet
+          </button>
+          <div class="relative">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+              <span class="text-xl">👤</span>
+            </div>
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="p-6">
+      <!-- Filters and Search -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Search Pets</label>
+            <input type="text" id="search-pets" placeholder="Search by name, breed, or owner..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Species</label>
+            <select id="filter-species" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">All Species</option>
+              <option value="Dog">Dogs</option>
+              <option value="Cat">Cats</option>
+              <option value="Bird">Birds</option>
+              <option value="Fish">Fish</option>
+              <option value="Rabbit">Rabbits</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Health Status</label>
+            <select id="filter-health" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">All Status</option>
+              <option value="Healthy">Healthy</option>
+              <option value="Needs Attention">Needs Attention</option>
+              <option value="Under Treatment">Under Treatment</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Adoption Status</label>
+            <select id="filter-adoption" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">All Pets</option>
+              <option value="false">Available</option>
+              <option value="true">Adopted</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pets Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="pets-grid">
+        <!-- Pet cards will be loaded here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-12">
+        <div class="text-6xl mb-4">🐾</div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No pets found</h3>
+        <p class="text-gray-500 mb-4">Try adjusting your search filters or add a new pet to get started.</p>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+          Add First Pet
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Pet Modal -->
+  <div id="pet-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+              <span class="mr-3">🐾</span>
+              <span id="modal-title">Add New Pet</span>
+            </h2>
+            <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <form id="pet-form" class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Pet Name *</label>
+              <input type="text" id="pet-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Species *</label>
+              <select id="pet-species" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="">Select Species</option>
+                <option value="Dog">Dog</option>
+                <option value="Cat">Cat</option>
+                <option value="Bird">Bird</option>
+                <option value="Fish">Fish</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Breed</label>
+              <input type="text" id="pet-breed" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+              <select id="pet-gender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Age (Years)</label>
+              <input type="number" id="pet-age-years" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Age (Months)</label>
+              <input type="number" id="pet-age-months" min="0" max="11" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+              <input type="text" id="pet-color" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+              <input type="number" id="pet-weight" step="0.1" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Health Status</label>
+              <select id="pet-health-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="Healthy">Healthy</option>
+                <option value="Needs Attention">Needs Attention</option>
+                <option value="Under Treatment">Under Treatment</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Vaccination Status</label>
+              <select id="pet-vaccination-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="Up to date">Up to date</option>
+                <option value="Due">Due</option>
+                <option value="Overdue">Overdue</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Microchip ID</label>
+              <input type="text" id="pet-microchip" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Adoption Status</label>
+              <select id="pet-adopted" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="false">Available for Adoption</option>
+                <option value="true">Adopted</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="mt-6 flex justify-end space-x-4">
+            <button type="button" id="cancel-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+              Cancel
+            </button>
+            <button type="submit" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium">
+              Save Pet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">
+    <span id="toast-message">Action completed!</span>
+    <button id="toast-close" class="ml-3 text-white hover:text-gray-200">✕</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/admin/js/pets.js"></script>
+</body>
+</html>
